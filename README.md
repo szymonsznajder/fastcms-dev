@@ -1,9 +1,8 @@
-# Comwrap Reply UK Franklin Website
-The UK website for Comwrap Reply
+# FastCMS
 
 ## Environments
-- Preview: https://main--comwrapuk--comwrapuk.hlx.page/
-- Live: https://main--comwrapuk--comwrapuk.hlx.live/
+- Preview: https://main--fastcms-dev--szymonsznajder.hlx.page/
+- Live: https://main--fastcms-dev--szymonsznajder.hlx.live/
 
 ## Installation
 
