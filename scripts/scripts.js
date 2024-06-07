@@ -1,5 +1,3 @@
-/* eslint-disable comma-dangle */
-/* eslint-disable no-unused-vars */
 import {
   sampleRUM,
   buildBlock,
@@ -12,22 +10,49 @@ import {
   decorateTemplateAndTheme,
   waitForLCP,
   loadBlocks,
+  toClassName,
+  getMetadata,
+  loadScript,
+  toCamelCase,
   loadCSS
-} from './aem.js';
+} from '/scripts/aem.js';
 
-import {
-  initialize as initSiteConfig
-} from './siteConfig.js';
+import { } from '/plusplus/src/siteConfig.js';
 
-import {
-  initialize as initExternalImage
-} from './externalImage.js';
 
-initSiteConfig();
-initExternalImage();
+const LCP_BLOCKS = []; // add your LCP blocks to the lis
+const AUDIENCES = {
+  mobile: () => window.innerWidth < 600,
+  desktop: () => window.innerWidth >= 600,
+  // define your custom audiences here as needed
+};
 
-const setDelayed = true; // do (true) or not do (false) final load.
-const LCP_BLOCKS = []; // add your LCP blocks to the list
+/**
+     * Gets all the metadata elements that are in the given scope.
+     * @param {String} scope The scope/prefix for the metadata
+     * @returns an array of HTMLElement nodes that match the given scope
+     */
+export function getAllMetadata(scope) {
+  return [...document.head.querySelectorAll(`meta[property^="${scope}:"],meta[name^="${scope}-"]`)]
+    .reduce((res, meta) => {
+      const id = toClassName(meta.name
+        ? meta.name.substring(scope.length + 1)
+        : meta.getAttribute('property').split(':')[1]);
+      res[id] = meta.getAttribute('content');
+      return res;
+    }, {});
+}
+
+// Define an execution context
+const pluginContext = {
+  getAllMetadata,
+  getMetadata,
+  loadCSS,
+  loadScript,
+  sampleRUM,
+  toCamelCase,
+  toClassName,
+};
 
 /**
  * Builds hero block and prepends to main in a new section.
@@ -39,9 +64,7 @@ function buildHeroBlock(main) {
   // eslint-disable-next-line no-bitwise
   if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
     const section = document.createElement('div');
-    section.append(buildBlock('hero', {
-      elems: [picture, h1],
-    }));
+    section.append(buildBlock('hero', { elems: [picture, h1] }));
     main.prepend(section);
   }
 }
@@ -57,7 +80,8 @@ async function loadFonts() {
     // do nothing
   }
 }
-
+// added for modal handling, see adobe docs
+// eslint-disable-next-line no-unused-vars
 function autolinkModals(element) {
   element.addEventListener('click', async(e) => {
     const origin = e.target.closest('a');
@@ -103,6 +127,15 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
+  // Add below snippet early in the eager phase
+  if (getMetadata('experiment') ||
+    Object.keys(getAllMetadata('campaign')).length ||
+    Object.keys(getAllMetadata('audience')).length) {
+    // eslint-disable-next-line import/no-relative-packages
+    const { loadEager: runEager } = await import('../plusplus/plugins/experimentation/src/index.js');
+    await runEager(document, { audiences: AUDIENCES }, pluginContext);
+  }
+
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
@@ -128,20 +161,24 @@ async function loadEager(doc) {
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
   await loadBlocks(main);
-
-  const {
-    hash,
-  } = window.location;
+  autolinkModals(doc); // added for modal handling, see adobe docs
+  const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
-
-  if (!window.hlx.suppressFrame) {
+  if (!window.hlx.suppressFrame) { // added for sidekick library - see block party
     loadHeader(doc.querySelector('header'));
     loadFooter(doc.querySelector('footer'));
   }
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+  if ((getMetadata('experiment') ||
+    Object.keys(getAllMetadata('campaign')).length ||
+    Object.keys(getAllMetadata('audience')).length)) {
+    // eslint-disable-next-line import/no-relative-packages
+    const { loadLazy: runLazy } = await import('/plusplus/plugins/experimentation/src/index.js');
+    await runLazy(document, { audiences: AUDIENCES }, pluginContext);
+  }
 
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
@@ -153,21 +190,19 @@ async function loadLazy(doc) {
  * without impacting the user experience.
  */
 function loadDelayed() {
-  // load anything that can be postponed to the latest here
   // eslint-disable-next-line import/no-cycle
-  if (setDelayed) {
-    window.setTimeout(() => import('./delayed.js'), window.cmsplus.analyticsdelay);
-  }
+  window.setTimeout(() => import('./delayed.js'), 3000);
+  // load anything that can be postponed to the latest here
 }
 
 async function loadPage() {
   const urlParams = new URLSearchParams(window.location.search);
+  // added for sidekick library - see block party
   if (urlParams.get('suppressFrame') || window.location.pathname.includes('tools/sidekick')) {
     window.hlx.suppressFrame = true;
     document.body.querySelector('header').remove();
     document.body.querySelector('footer').remove();
   }
-
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
