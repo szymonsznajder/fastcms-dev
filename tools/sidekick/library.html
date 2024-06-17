@@ -47,24 +47,24 @@
       const library = document.createElement('sidekick-library');
       library.config = {
         base: '/tools/sidekick/library.json',
-        plugins: [
-          {
-            "id": "foo",
-            "title": "Foo",
-            "url": "/tools/sidekick/foo.html"
+        plugins: [{
+          blocks: {
+            encodeImages: true,
           },
-          {
-            blocks: {
-              encodeImages: true,
-            },
-            templates: {
-              src: '/tools/sidekick/plugins/templates/templates.js',
-            },
-            tags: {
-              src: '/tools/sidekick/plugins/tags/tags.js',
-            }
+          templates: {
+            src: '/tools/sidekick/plugins/templates/templates.js',
+          },
+          tags: {
+            src: '/tools/sidekick/plugins/tags/tags.js',
           }
-        ]
+        },
+        {
+          "specialViews": [{
+            'title': 'Better JSON Viewer',
+            'path': '**.json',
+            'viewer': '/tools/sidekick/better-json-viewer/index.html'
+          }]
+        }]
       };
 
       document.body.prepend(library);
