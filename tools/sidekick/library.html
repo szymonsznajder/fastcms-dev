@@ -47,7 +47,7 @@
       const library = document.createElement('sidekick-library');
       library.config = {
         base: '/tools/sidekick/library.json',
-        plugins: [{
+        plugins: {
           blocks: {
             encodeImages: true,
           },
@@ -57,14 +57,7 @@
           tags: {
             src: '/tools/sidekick/plugins/tags/tags.js',
           }
-        },
-        {
-          "specialViews": [{
-            'title': 'Better JSON Viewer',
-            'path': '**.json',
-            'viewer': '/tools/sidekick/better-json-viewer/index.html'
-          }]
-        }]
+        }
       };
 
       document.body.prepend(library);
