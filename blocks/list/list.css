@@ -56,3 +56,42 @@ main .list-container {
         flex-direction: row;
     }
 }
+
+/* Quick links Block */
+.quick-links ul {
+    margin: 0;
+    padding: 1rem;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    background: black;
+}
+
+.quick-links ul li,
+.quick-links ul li a {
+    color: white;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.quick-links ul li a:hover,
+.quick-links ul li a:focus {
+    color: gold;
+    border-bottom: 1px solid gold;
+}
+
+.quick-links ul li:last-child {
+    padding: 0;
+    border: none;
+}
+
+@media (width >= 900px) {
+    .quick-links ul {
+        flex-direction: row;
+    }
+
+    .quick-links ul li {
+        padding-right: 1rem;
+        border-right: 1px solid gold;
+    }
+}
