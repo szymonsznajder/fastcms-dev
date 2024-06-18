@@ -510,20 +510,20 @@ a.button:any-link {
   width: 100%;
 }
 
-main > .section:not(.hero-container):first-child > div {
+/* main > .section:not(.hero-container):first-child > div {
   max-width: 680px;
   margin: var(--spacing-l) auto;
   display: flex;
   flex-direction: column;
-}
+} */
 
-main .section:not(.hero-container):first-child > div {
+/* main .section:not(.hero-container):first-child > div {
   & .button-container ,
   & h1,
   & h1 + p {
     text-align: center;
   }
-}
+} */
 
 /* hover wrapper and bounce the inner icon */
 .bounce-item-effect-hover-wrapper:hover .class {
