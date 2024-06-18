@@ -106,3 +106,42 @@ main .hero-container {
   background-color: white;
   color: black;
 }
+
+body {
+  background: linear-gradient(135deg, #0056a7, #165fa3, #477aaa);
+  font-family: "Courgette", cursive;
+  height: 100vh;
+}
+
+.hero-item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+  text-align: center;
+  color: #eee;
+  z-index: -1;
+  /* animation: fadeIn 1.5s ease-in-out; */
+}
+
+header h3 {
+  font-size: 3.5rem;
+  font-weight: 700;
+}
+
+header p {
+  font-size: 1.5rem;
+}
+
+section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  min-height: 100vh;
+  font-size: 5rem;
+  background: #fcdb6d;
+  color: #0056a7;
+}
