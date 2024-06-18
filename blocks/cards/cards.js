@@ -13,17 +13,14 @@ export default function decorate(block) {
     while (row.firstElementChild) li.append(row.firstElementChild);
     [...li.children].forEach((div) => {
       const HEADING = div.querySelector('h3');
-      if (div.children.length === 1 && div.querySelector('picture')) { div.className = CARD_IMAGE; } else if (HEADING) {
+      if (div.children.length === 1 && div.querySelector('picture')) { 
+        div.className = CARD_IMAGE; 
+      } else if (HEADING) {
         div.className = CARD_TITLE;
+        HEADING.classList.add(CARD_HEADING);
       } else {
         div.className = CARD_BODY;
       }
-
-      [...div.children].forEach((item) => {
-        if (item.tagName === 'H3') {
-          item.className = CARD_HEADING;
-        }
-      });
     });
     ul.append(li);
   });
